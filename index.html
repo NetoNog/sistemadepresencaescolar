@@ -1,0 +1,377 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistema de Presença Escolar</title>
+    <style>
+        /* Reset básico */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        /* Estilos Gerais */
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f4f6f9;
+            color: #333;
+            padding: 0 20px;
+        }
+
+        h1, h2, h3 {
+            color: #4CAF50;
+            text-align: center;
+        }
+
+        /* Abas */
+        .tabs {
+            display: flex;
+            justify-content: center;
+            margin-top: 20px;
+            border-bottom: 2px solid #ddd;
+        }
+
+        .tablink {
+            padding: 15px 30px;
+            background-color: #fff;
+            border: 2px solid #ddd;
+            margin-right: 10px;
+            border-radius: 30px 30px 0 0;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            color: #4CAF50;
+            font-weight: bold;
+        }
+
+        .tablink:hover {
+            background-color: #e8f5e9;
+            transform: scale(1.05);
+        }
+
+        .tablink.active {
+            background-color: #4CAF50;
+            color: white;
+            border: 2px solid #4CAF50;
+        }
+
+        /* Conteúdo das Abas */
+        .tabcontent {
+            display: none;
+            padding: 20px;
+            border-radius: 8px;
+            background-color: #fff;
+            margin-top: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .tabcontent.active {
+            display: block;
+        }
+
+        /* Estilo dos formulários */
+        form {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-top: 20px;
+        }
+
+        input, select {
+            padding: 12px;
+            margin: 10px 0;
+            width: 100%;
+            max-width: 400px;
+            border: 2px solid #4CAF50;
+            border-radius: 8px;
+            font-size: 16px;
+            outline: none;
+            transition: border-color 0.3s ease;
+        }
+
+        input:focus, select:focus {
+            border-color: #66bb6a;
+        }
+
+        button {
+            padding: 12px 25px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 30px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: background-color 0.3s ease;
+        }
+
+        button:hover {
+            background-color: #66bb6a;
+        }
+
+        /* Lista de Itens */
+        .lista {
+            margin-top: 20px;
+            padding: 15px;
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 600px;
+        }
+
+        .lista div {
+            padding: 10px 0;
+            border-bottom: 1px solid #eee;
+        }
+
+        .lista div:last-child {
+            border-bottom: none;
+        }
+
+        /* Layout responsivo */
+        @media (max-width: 768px) {
+            .tablink {
+                font-size: 14px;
+                padding: 10px 20px;
+            }
+
+            .tabs {
+                flex-direction: column;
+            }
+
+            .lista {
+                max-width: 100%;
+            }
+        }
+
+    </style>
+</head>
+<body>
+
+    <h1>Sistema de Presença Escolar</h1>
+
+    <div class="tabs">
+        <div class="tablink" onclick="openTab(event, 'CadastroAluno')">Cadastro de Alunos</div>
+        <div class="tablink" onclick="openTab(event, 'CadastroTurma')">Cadastro de Turmas</div>
+        <div class="tablink" onclick="openTab(event, 'CadastroProfessor')">Cadastro de Professores</div>
+        <div class="tablink" onclick="openTab(event, 'MarcarPresenca')">Marcar Presença</div>
+    </div>
+
+    <!-- Cadastro de Alunos -->
+    <div id="CadastroAluno" class="tabcontent">
+        <h2>Cadastro de Aluno</h2>
+        <form id="formAluno">
+            <input type="text" id="nomeAluno" placeholder="Nome" required>
+            <input type="text" id="sobrenomeAluno" placeholder="Sobrenome" required>
+            <input type="text" id="nomePai" placeholder="Nome do Pai" required>
+            <input type="text" id="nomeMae" placeholder="Nome da Mãe" required>
+            <input type="date" id="dataNascimento" required>
+            <input type="text" id="cpfAluno" placeholder="CPF" required>
+            <button type="submit">Cadastrar Aluno</button>
+        </form>
+
+        <h3>Alunos Cadastrados:</h3>
+        <div id="listaAlunos" class="lista"></div>
+    </div>
+
+    <!-- Cadastro de Turmas -->
+    <div id="CadastroTurma" class="tabcontent">
+        <h2>Cadastro de Turma</h2>
+        <form id="formTurma">
+            <input type="text" id="nomeTurma" placeholder="Nome da Turma" required>
+            <button type="submit">Cadastrar Turma</button>
+        </form>
+
+        <h3>Turmas Cadastradas:</h3>
+        <div id="listaTurmas" class="lista"></div>
+    </div>
+
+    <!-- Cadastro de Professores -->
+    <div id="CadastroProfessor" class="tabcontent">
+        <h2>Cadastro de Professor</h2>
+        <form id="formProfessor">
+            <input type="text" id="nomeProfessor" placeholder="Nome" required>
+            <input type="text" id="cpfProfessor" placeholder="CPF" required>
+            <select id="turmasProfessor" multiple required>
+                <!-- As turmas serão inseridas dinamicamente -->
+            </select>
+            <button type="submit">Cadastrar Professor</button>
+        </form>
+
+        <h3>Professores Cadastrados:</h3>
+        <div id="listaProfessores" class="lista"></div>
+    </div>
+
+    <!-- Marcação de Presença -->
+    <div id="MarcarPresenca" class="tabcontent">
+        <h2>Marcar Presença</h2>
+        <form id="formPresenca">
+            <select id="alunoPresente" required>
+                <!-- Alunos serão inseridos aqui dinamicamente -->
+            </select>
+            <select id="turmaPresente" required>
+                <!-- Turmas serão inseridas aqui dinamicamente -->
+            </select>
+            <input type="date" id="dataPresenca" required>
+            <button type="submit">Marcar Presença</button>
+        </form>
+
+        <h3>Presenças Registradas:</h3>
+        <div id="listaPresencas" class="lista"></div>
+    </div>
+
+    <script>
+        let alunos = [];
+        let turmas = [];
+        let professores = [];
+        let presencas = [];
+
+        // Função para abrir as abas
+        function openTab(evt, tabName) {
+            let i, tabcontent, tablinks;
+            tabcontent = document.getElementsByClassName("tabcontent");
+            for (i = 0; i < tabcontent.length; i++) {
+                tabcontent[i].classList.remove("active");
+            }
+            tablinks = document.getElementsByClassName("tablink");
+            for (i = 0; i < tablinks.length; i++) {
+                tablinks[i].classList.remove("active");
+            }
+            document.getElementById(tabName).classList.add("active");
+            evt.currentTarget.classList.add("active");
+        }
+
+        // Função para gerar matrícula única
+        function gerarMatricula() {
+            let matricula;
+            do {
+                matricula = Math.floor(Math.random() * 1000000);
+            } while (alunos.some(aluno => aluno.matricula === matricula));
+            return matricula;
+        }
+
+        // Função para atualizar os selects
+        function updateSelects() {
+            const alunoSelect = document.getElementById("alunoPresente");
+            const turmaSelect = document.getElementById("turmaPresente");
+            const turmasProfessorSelect = document.getElementById("turmasProfessor");
+
+            alunoSelect.innerHTML = '';
+            turmaSelect.innerHTML = '';
+            turmasProfessorSelect.innerHTML = '';
+
+            alunos.forEach(aluno => {
+                const option = document.createElement("option");
+                option.value = aluno.matricula;
+                option.text = `${aluno.nome} ${aluno.sobrenome}`;
+                alunoSelect.appendChild(option);
+            });
+
+            turmas.forEach(turma => {
+                const option = document.createElement("option");
+                option.value = turma.nome;
+                option.text = turma.nome;
+                turmaSelect.appendChild(option);
+
+                const turmaOption = document.createElement("option");
+                turmaOption.value = turma.nome;
+                turmaOption.text = turma.nome;
+                turmasProfessorSelect.appendChild(turmaOption);
+            });
+        }
+
+        // Função para atualizar as listas de alunos, turmas e professores
+        function updateListas() {
+            // Atualiza a lista de alunos
+            const listaAlunos = document.getElementById("listaAlunos");
+            listaAlunos.innerHTML = alunos.map(aluno => `<div>${aluno.nome} ${aluno.sobrenome} (Matrícula: ${aluno.matricula})</div>`).join('');
+
+            // Atualiza a lista de turmas
+            const listaTurmas = document.getElementById("listaTurmas");
+            listaTurmas.innerHTML = turmas.map(turma => `<div>${turma.nome} : ${turma.alunos.length} aluno(s)</div>`).join('');
+
+            // Atualiza a lista de professores
+            const listaProfessores = document.getElementById("listaProfessores");
+            listaProfessores.innerHTML = professores.map(professor => {
+                const turmasProfessor = professor.turmas.join(', ');
+                return `<div>${professor.nome} (CPF: ${professor.cpf}) - Turmas: ${turmasProfessor}</div>`;
+            }).join('');
+
+            // Atualiza a lista de presenças
+            const listaPresencas = document.getElementById("listaPresencas");
+            listaPresencas.innerHTML = presencas.map(presenca => `<div>${presenca.alunoNome} - Turma: ${presenca.turmaNome} - Data: ${presenca.data}</div>`).join('');
+        }
+
+        // Cadastrar Aluno
+        document.getElementById("formAluno").addEventListener("submit", function(event) {
+            event.preventDefault();
+
+            const aluno = {
+                nome: document.getElementById("nomeAluno").value,
+                sobrenome: document.getElementById("sobrenomeAluno").value,
+                nomePai: document.getElementById("nomePai").value,
+                nomeMae: document.getElementById("nomeMae").value,
+                dataNascimento: document.getElementById("dataNascimento").value,
+                cpf: document.getElementById("cpfAluno").value,
+                matricula: gerarMatricula()
+            };
+            alunos.push(aluno);
+            alert('Aluno cadastrado!');
+            updateSelects();
+            updateListas();
+        });
+
+        // Cadastrar Turma
+        document.getElementById("formTurma").addEventListener("submit", function(event) {
+            event.preventDefault();
+            const turma = {
+                nome: document.getElementById("nomeTurma").value,
+                alunos: []
+            };
+            turmas.push(turma);
+            alert('Turma cadastrada!');
+            updateSelects();
+            updateListas();
+        });
+
+        // Cadastrar Professor
+        document.getElementById("formProfessor").addEventListener("submit", function(event) {
+            event.preventDefault();
+
+            const professor = {
+                nome: document.getElementById("nomeProfessor").value,
+                cpf: document.getElementById("cpfProfessor").value,
+                turmas: Array.from(document.getElementById("turmasProfessor").selectedOptions).map(option => option.value)
+            };
+            professores.push(professor);
+            alert('Professor cadastrado!');
+            updateSelects();
+            updateListas();
+        });
+
+        // Marcar Presença
+        document.getElementById("formPresenca").addEventListener("submit", function(event) {
+            event.preventDefault();
+
+            const alunoMatricula = document.getElementById("alunoPresente").value;
+            const turmaNome = document.getElementById("turmaPresente").value;
+            const dataPresenca = document.getElementById("dataPresenca").value;
+
+            const aluno = alunos.find(a => a.matricula == alunoMatricula);
+            const presenca = {
+                alunoNome: `${aluno.nome} ${aluno.sobrenome}`,
+                turmaNome,
+                data: dataPresenca
+            };
+            presencas.push(presenca);
+
+            alert('Presença registrada!');
+            updateListas();
+        });
+
+        // Iniciar com a aba de cadastro de alunos
+        openTab(event, 'CadastroAluno');
+    </script>
+</body>
+</html>
