@@ -21,4 +21,4 @@ O **Sistema de Presença Escolar** tem como objetivo automatizar o registro de p
 Clone este repositório para a sua máquina local:
 
 ```bash
-git clone https://github.com/seu-usuario/sistemadepresencaescolar.git
+git clone https://github.com/NetoNog/sistemadepresencaescolar.git
